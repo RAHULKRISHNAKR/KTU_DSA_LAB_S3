@@ -1,0 +1,107 @@
+#include<stdio.h>
+#include<stdlib.h>
+struct node {
+    int coeff;
+    int expo;
+    struct node *link;
+    };
+
+struct node *createNewNode(int coef , int exp){
+    struct node* newNode =(struct node*)malloc(sizeof(struct node));
+    if(newNode == NULL){printf("Memmory alocation failed");exit(EXIT_FAILURE);}
+    newNode->coeff = coef;
+    newNode->expo = exp;
+    newNode->link = NULL;
+    return newNode;
+}
+
+struct node* insert(struct node* head, int coef, int exp){
+    struct node* ptr;
+    struct node* newNode = createNewNode(coef , exp);
+    newNode->coeff = coef;
+    newNode->expo = exp;
+    newNode->link = NULL;
+    if((head == NULL) || (exp> head->expo)){
+        newNode->link = head;
+        head = newNode;
+    }
+    else{
+        ptr = head;
+        while(ptr->link !=NULL && ptr->link->expo > exp){
+            ptr = ptr->link;
+        }
+        newNode->link = ptr->link;
+        ptr->link = newNode;
+    }
+    return head;
+}
+
+struct node* mulpoly(struct node* poly1 , struct node* poly2){
+    int res1,res2;
+    struct node* resultPoly = NULL;
+    struct node* ptr = poly1;
+    struct node* ptr2 = poly2;
+    while(ptr != NULL){
+            while(ptr2!=NULL){
+            res1 = ptr->coeff * ptr2->coeff;
+            res2 = ptr->expo + ptr2->expo;
+            resultPoly = insert(resultPoly,res1,res2);
+            ptr2 = ptr2->link;
+        }
+        ptr = ptr->link;
+    
+    }
+    return resultPoly;
+}
+
+void display(struct node* poly){
+    struct node* temp = poly;
+    while(temp != NULL){
+        printf("%dx^%d",temp->coeff, temp->expo);
+        if(temp->link != NULL){
+        printf("+ ");}
+        temp = temp->link;
+    }
+    printf("\n");
+}
+
+int main(){
+    struct node* poly1 = NULL;
+    struct node* poly2 = NULL;
+    struct node* resultPoly = NULL;
+    int choice, coeff, exp;
+    int n;
+    while(1){
+    printf("1.Enter Polynomials   2.enter Polynomial2   3.Multiply Polynomials   4.Display Poly   5.Exit\n");
+    printf("Enter choice: ");
+    scanf("%d",&choice);
+    switch(choice){
+        case 1: printf("Enter number of terms of poly 1:");
+                scanf("%d", &n);
+                for(int i=0;i<n;i++){
+                printf("Enter coeff and expo for poly1");
+                scanf("%d %d", &coeff , &exp);
+                poly1 = insert(poly1, coeff,exp);
+                }break;
+        case 2: printf("Enter number of terms of poly 2:");
+                scanf("%d", &n);
+                for(int i=0;i<n;i++){
+                printf("Enter coeff and expo for poly2");
+                scanf("%d %d", &coeff , &exp);
+                poly2 = insert(poly2, coeff,exp);
+                }break;
+        case 3: resultPoly = mulpoly(poly1, poly2);
+                printf("multiplied sucessfully");
+                break;
+        case 4: printf("Display poly1: ");
+                display(poly1);
+                printf("poly 2:");
+                display(poly2);
+                printf("result poly:");
+                display(resultPoly);
+                break;
+        case 5: exit(0);
+                break;
+    }}
+    return 0;
+}
